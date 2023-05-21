@@ -1,6 +1,7 @@
 from math import sqrt
 
-from app.constants import DiscColours, ProcessedDiscs
+from app.constants import DiscColours
+from app.utils import ProcessedDiscs
 
 DISK_DIAMETER = 20  # pixels, needs to be tested
 DISK_RADIUS_ERROR_THRESHOLD = 5  # pixels of accepted error in disk radius
@@ -49,4 +50,3 @@ class Disc:
         self.x = x
         self.y = y
         self.missed_frames = 0
-

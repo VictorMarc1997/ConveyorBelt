@@ -12,6 +12,9 @@ class DiscQueue:
     def pop_disc(self):
         return self.discs.pop()
 
+    def get_most_right_disc(self):
+        return self.discs[-1] if self.discs else None
+
     def valid_new_disk(self, x):
         # TODO: check if x axis goes up to right or to left
         return all(disc.x > x for disc in self.discs)
@@ -34,11 +37,13 @@ class DiscQueue:
         return self
 
     def check_disk_at_servo(self):
-        last_disc = self.discs[-1]
+        last_disc = self.get_most_right_disc()
         return (
-            last_disc.id % 3 == 1
+            last_disc
+            and last_disc.id % 3 == 1
             and INTAKE_AREA_X_LOW < last_disc.x < INTAKE_AREA_X_HIGH
         )
 
     def check_disk_moved_to_belt(self):
-        return BELT_AREA_Y > self.discs[-1].y
+        last_disc = self.get_most_right_disc()
+        return last_disc and BELT_AREA_Y > last_disc.y

@@ -1,9 +1,12 @@
-from ServoController import StepperServoController, ContinuousServoController
-from BaseController import BaseController
-from DCMotorController import DCMotorController
-from CameraController import CameraController
-from LedController import LedController
-from ButtonController import ButtonController
+from app.controller.BaseController import BaseController
+from app.controller.ServoController import (
+    StepperServoController,
+    ContinuousServoController,
+)
+from app.controller.DCMotorController import DCMotorController
+from app.controller.CameraController import CameraController
+from app.controller.LedController import LedController
+from app.controller.ButtonController import ButtonController
 
 __all__ = [
     "StepperServoController",

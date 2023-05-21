@@ -14,3 +14,18 @@ or
 ```commandline
 pip3 install -r requirements.txt
 ```
+
+## Run
+
+* For simulation, comment out the raspberry pi specific imports and run with flag `--simulate`
+
+```commandline
+python runner.py --simulate
+```
+
+* Otherwise, leave code as is and run
+
+```commandline
+python runner.py
+```
+

@@ -1,9 +1,5 @@
-import time
 from enum import Enum
 from dataclasses import dataclass
-from typing import List
-
-from app.utils import singleton
 
 # GPIO pins and PWM controller channels
 CAMERA_GPIO = 0
@@ -56,72 +52,6 @@ class Instruction:
     move: Moves
 
 
-@singleton
-class AllDiscs:
-    count: int
-
-    def __init__(self):
-        self.count = 0
-
-    def add(self):
-        self.count += 1
-
-    def reset(self):
-        self.count = 0
-
-    def get_count(self):
-        return self.count
-
-
-@singleton
-class ProcessedDiscs:
-    count: int
-    white: int
-    black: int
-
-    def __init__(self):
-        self.count = 0
-        self.white = 0
-        self.black = 0
-
-    def add(self, colour: DiscColours):
-        self.count += 1
-        if colour == DiscColours.BLACK:
-            self.black += 1
-        elif colour == DiscColours.WHITE:
-            self.white += 1
-        return self
-
-    def reset(self):
-        self.count = 0
-        self.white = 0
-        self.black = 0
-        return self
-
-    def get_count_all(self):
-        return self.count
-
-    def get_count_white(self):
-        return self.white
-
-    def get_count_black(self):
-        return self.black
-
-
-@singleton
-class FilterServoInstructionsQueue:
-    instructions: List[Instruction]
-
-    def __init__(self):
-        self.instructions = []
-
-    def add_instruction(self, time_added, colour):
-        self.instructions = [
-            Instruction(time_added=time_added, move=COLOUR_FILTER_MAP[colour])
-        ] + self.instructions
-
-    def get_instruction(self, delay):
-        now = time.time()
-        if now - self.instructions[-1].time_added > delay:
-            return self.instructions.pop()
-        return None
+class RunStatus(int, Enum):
+    LIVE = 1
+    SIMULATION = 2

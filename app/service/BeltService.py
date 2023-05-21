@@ -1,9 +1,18 @@
 import time
 
 from app.disc import DiscQueue
-from app.utils import detect_circles_current_frame
-from app.constants import ProcessedDiscs, FilterServoInstructionsQueue, Moves, FILTER_SERVO_ANGLE_LEFT, \
-    FILTER_SERVO_ANGLE_RIGHT, INTAKE_SERVO_ANGLE_ON, INTAKE_SERVO_ANGLE_OFF
+from app.utils import (
+    detect_circles_current_frame,
+    ProcessedDiscs,
+    FilterServoInstructionsQueue,
+)
+from app.constants import (
+    Moves,
+    FILTER_SERVO_ANGLE_LEFT,
+    FILTER_SERVO_ANGLE_RIGHT,
+    INTAKE_SERVO_ANGLE_ON,
+    INTAKE_SERVO_ANGLE_OFF,
+)
 
 DELAY_TO_REACH_FILTER = 3
 
@@ -75,14 +84,19 @@ class BeltService:
         instruction = self.filter_instructions.get_instruction(DELAY_TO_REACH_FILTER)
         if instruction:
             if instruction.move == Moves.LEFT:
-                print(f"Sorting Disc <{self.disc_queue.discs[-1]}> to colour black")
+                print(
+                    f"Sorting Disc <{self.disc_queue.get_most_right_disc()}> "
+                    f"to colour black"
+                )
                 self.filter_servo.rotate_angle(FILTER_SERVO_ANGLE_LEFT)
             elif instruction.move == Moves.RIGHT:
-                print(f"Sorting Disc <{self.disc_queue.discs[-1]}> to colour white")
+                print(
+                    f"Sorting Disc <{self.disc_queue.get_most_right_disc()}> "
+                    f"to colour white"
+                )
                 self.filter_servo.rotate_angle(FILTER_SERVO_ANGLE_RIGHT)
 
     def _run(self):
-        self.turn_on()
         self.start_time = time.time()
 
         while self.running:
@@ -90,13 +104,15 @@ class BeltService:
             self.disc_queue.add_or_update_discs(circles)
 
             if self.disc_queue.check_disk_at_servo():
-                print(f"Moving Disc <{self.disc_queue.discs[-1]}> to belt")
+                print(f"Moving Disc <{self.disc_queue.get_most_right_disc()}> to belt")
                 self.move_intake_servo(active=True)
 
             elif self.disc_queue.check_disk_moved_to_belt():
                 self.move_intake_servo(active=False)
                 move_time = time.time()
-                self.filter_instructions.add_instruction(move_time, self.disc_queue.discs[-1].colour)
+                self.filter_instructions.add_instruction(
+                    move_time, self.disc_queue.get_most_right_disc().colour
+                )
 
             self.move_filter_servo()
 

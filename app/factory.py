@@ -23,9 +23,7 @@ def create_belt_service() -> BeltService:
 
     camera = CameraController()
     led = LedController(LED_CHANNEL)
-    intake_servo = StepperServoController(
-        INTAKE_SERVO_CHANNEL
-    )  # use ContinuousServoController if 360 servo
+    intake_servo = StepperServoController(INTAKE_SERVO_CHANNEL)
     filter_servo = StepperServoController(FILTER_SERVO_CHANNEL)
 
     start_button = ButtonController(START_BUTTON_PIN)
