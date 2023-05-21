@@ -5,24 +5,36 @@ from typing import List
 
 from app.utils import singleton
 
+# GPIO pins and PWM controller channels
 CAMERA_GPIO = 0
 INTAKE_SERVO_CHANNEL = 0  # PWM controller channel
 FILTER_SERVO_CHANNEL = 1  # PWM controller channel
 LED_CHANNEL = 2  # PWM controller channel
+
 START_BUTTON_PIN = 10  # to be changed
 STOP_BUTTON_PIN = 12  # to be changed
-DC_MOTOR_PIN = 16  # wrong?
 
+DC_MOTOR_EN_PIN = 25
+DC_MOTOR_IN1_PIN = 24
+DC_MOTOR_IN2_PIN = 23
+
+
+# Servo angles
 FILTER_SERVO_ANGLE_LEFT = 45
-FILTER_SERVO_ANGLE_RIGHT = 135  # the difference between these two is 90 degrees?
+FILTER_SERVO_ANGLE_RIGHT = 135
+# the difference between these two should be 90 degrees?
 
 INTAKE_SERVO_ANGLE_ON = 60
 INTAKE_SERVO_ANGLE_OFF = 0
 
-INTAKE_AREA_X_LOW = 300  # x coordinate of where we consider intake servo should move to take the disc
+# Coordinates to mark when intake servo to operate
+
+# x coordinate of where we consider intake servo should move to take the disc
+INTAKE_AREA_X_LOW = 300
 INTAKE_AREA_X_HIGH = 350
 
-BELT_AREA_Y = 500  # y coordinate of line where we consider disc has moved onto belt
+# y coordinate of line where we consider disc has moved onto belt
+BELT_AREA_Y = 500
 
 
 class DiscColours(str, Enum):
@@ -35,10 +47,7 @@ class Moves(str, Enum):
     RIGHT = "right"
 
 
-COLOUR_FILTER_MAP = {
-    DiscColours.WHITE: Moves.RIGHT,
-    DiscColours.BLACK: Moves.LEFT
-}
+COLOUR_FILTER_MAP = {DiscColours.WHITE: Moves.RIGHT, DiscColours.BLACK: Moves.LEFT}
 
 
 @dataclass
@@ -107,7 +116,9 @@ class FilterServoInstructionsQueue:
         self.instructions = []
 
     def add_instruction(self, time_added, colour):
-        self.instructions = [Instruction(time_added=time_added, move=COLOUR_FILTER_MAP[colour])] + self.instructions
+        self.instructions = [
+            Instruction(time_added=time_added, move=COLOUR_FILTER_MAP[colour])
+        ] + self.instructions
 
     def get_instruction(self, delay):
         now = time.time()
