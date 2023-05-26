@@ -50,6 +50,11 @@ def rgb_to_color(r, g, b):
     return None
 
 
+def draw_circle(self, image, x, y, radius, rgb, z):
+    if self.env.is_live:
+        cv2.circle(image, (x, y), radius, rgb, z)
+
+
 def detect_circles_current_frame(camera):
     if Environment().is_live:
         circles = get_circles_mask(camera.current_frame)

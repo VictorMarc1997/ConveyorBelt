@@ -51,7 +51,7 @@ class StepperServoController(BaseController):
             self.servo = None
 
     def rotate_angle(self, angle: int):
-        print(f"Rotating Servo {self.channel} - {angle} degrees clockwise")
+        print(f"Rotating Servo {self.channel} to an angle = {angle} degrees")
         if self.env.is_live:
             self.servo.angle = angle
         return self

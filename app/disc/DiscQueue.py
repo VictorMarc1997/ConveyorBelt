@@ -20,6 +20,7 @@ class DiscQueue:
         return all(disc.x > x for disc in self.discs)
 
     def add_or_update_discs(self, circles):
+        # TODO: updating length of self.discs while iterating
         for disc in self.discs:
             found = False
             for circle in circles:
@@ -28,6 +29,7 @@ class DiscQueue:
                     disc.update_position(circle_x, circle_y)
                     found = True
                     break
+                # TODO: creating the same disc multiple times
                 if self.valid_new_disk(circle_x):
                     found = True
                     self.add_disc(Disc(**circles))

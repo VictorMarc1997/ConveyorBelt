@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 import cv2
 from time import sleep
 
@@ -49,11 +47,6 @@ class CameraController(BaseController):
         if self.env.is_live:
             # Display the frame using Matplotlib
             cv2.imshow("Camera feed", self.current_frame)
-
-    @abstractmethod
-    def draw_circle(self, image, x, y, radius, rgb, z):
-        if self.env.is_live:
-            cv2.circle(image, (x, y), radius, rgb, z)
 
     def stop(self):
         print(f"Disconnecting the camera on channel {self.channel}")

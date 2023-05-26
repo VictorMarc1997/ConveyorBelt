@@ -14,7 +14,7 @@ from app.constants import (
     INTAKE_SERVO_ANGLE_OFF,
 )
 
-DELAY_TO_REACH_FILTER = 3
+DELAY_TO_REACH_FILTER = 3  # seconds
 
 
 class BeltService:
@@ -64,15 +64,12 @@ class BeltService:
         self.led.turn_on()
         self.start_belt()
         self.running = True
+        self.run()
 
     def turn_off(self):
         self.led.turn_off()
         self.stop_belt()
         self.running = False
-
-    def run(self):
-        self.turn_on()
-        self._run()
 
     def move_intake_servo(self, active):
         if active:
@@ -96,13 +93,16 @@ class BeltService:
                 )
                 self.filter_servo.rotate_angle(FILTER_SERVO_ANGLE_RIGHT)
 
-    def _run(self):
+    def run(self):
         self.start_time = time.time()
 
         while self.running:
+            # get circles from camera
             circles = detect_circles_current_frame(self.camera)
+            # update Discs with the circles
             self.disc_queue.add_or_update_discs(circles)
 
+            # when are discs popped from queue if not intake
             if self.disc_queue.check_disk_at_servo():
                 print(f"Moving Disc <{self.disc_queue.get_most_right_disc()}> to belt")
                 self.move_intake_servo(active=True)
@@ -115,5 +115,3 @@ class BeltService:
                 )
 
             self.move_filter_servo()
-
-        self.turn_off()

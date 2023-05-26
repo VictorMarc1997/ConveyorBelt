@@ -25,6 +25,7 @@ INTAKE_SERVO_ANGLE_OFF = 0
 
 # Coordinates to mark when intake servo to operate
 
+# TODO: draw these lines on video
 # x coordinate of where we consider intake servo should move to take the disc
 INTAKE_AREA_X_LOW = 300
 INTAKE_AREA_X_HIGH = 350

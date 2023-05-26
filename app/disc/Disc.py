@@ -36,7 +36,7 @@ class Disc:
         else:
             self.missed_frames += 1
 
-    def check_circle_is_disk(self, x, y, radius, colour):
+    def check_circle_is_disk(self, x: int, y: int, radius: int, colour: DiscColours):
         dist_from_last_point = sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
         return (
