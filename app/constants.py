@@ -8,7 +8,7 @@ FILTER_SERVO_CHANNEL = 1  # PWM controller channel
 LED_CHANNEL = 2  # PWM controller channel
 
 START_BUTTON_PIN = 10  # to be changed
-STOP_BUTTON_PIN = 12  # to be changed
+STOP_BUTTON_PIN = 12  # to be changed x 2
 
 DC_MOTOR_EN_PIN = 25
 DC_MOTOR_IN1_PIN = 24
