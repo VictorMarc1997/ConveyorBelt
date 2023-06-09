@@ -1,6 +1,6 @@
 ## Prerequisites
 
-Run in raspberrypi?
+Run in raspberrypi, python 3.7.0
 
 ```
 sudo apt-get install python-rpi.gpio python3-rpi.gpio
