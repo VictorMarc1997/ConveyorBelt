@@ -6,7 +6,7 @@ import board
 import busio
 import adafruit_pca9685
 
-FULL_DUTY_CYCLE = 0xFFFF
+FULL_DUTY_CYCLE = 13000
 
 
 class LedController(BaseController):
