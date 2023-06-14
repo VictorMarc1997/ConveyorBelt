@@ -4,10 +4,9 @@ from typing import List
 import cv2
 import numpy as np
 
-from app.constants import DiscColours, Instruction, COLOUR_FILTER_MAP, RunStatus
+from app.constants import DiscColours, Instruction, RunStatus, BELT_AREA_X_RIGHT, BELT_AREA_X_LEFT, BELT_AREA_Y_DOWN, BELT_AREA_Y_UP
 
-WHITE_SENSITIVITY = 30
-BLACK_SENSITIVITY = 50
+SENSITIVITY = 50
 
 
 def singleton(class_):
@@ -36,49 +35,62 @@ def get_circles_mask(frame):
         minDist=50,
         param1=50,
         param2=30,
-        minRadius=10,
-        maxRadius=100,
+        minRadius=85,
+        maxRadius=115,
     )
     return circles
 
 
 def rgb_to_color(r, g, b):
-    if all(colour > 255 - WHITE_SENSITIVITY for colour in [r, g, b]):
+    print(f"r: {r}, g: {g}, b: {b}")
+    if all(colour > 200 - SENSITIVITY for colour in [r, g, b]):
         return DiscColours.WHITE
-    elif all(colour < BLACK_SENSITIVITY for colour in [r, g, b]):
+    elif all(colour < 50 + SENSITIVITY for colour in [r, g, b]):
         return DiscColours.BLACK
+    elif g > 190 - SENSITIVITY and r < 80 + SENSITIVITY and b < 80 + SENSITIVITY:
+        return DiscColours.GREEN
     return None
 
 
-def draw_circle(self, image, x, y, radius, rgb, z):
-    if self.env.is_live:
-        cv2.circle(image, (x, y), radius, rgb, z)
+def draw_lines(frame):
+    cv2.line(frame, (BELT_AREA_X_LEFT, 1), (BELT_AREA_X_LEFT+1, 639), (0, 0, 255), thickness=2)
+    cv2.line(frame, (BELT_AREA_X_RIGHT, 1), (BELT_AREA_X_RIGHT+1, 639), (0, 0, 255), thickness=2)
+        
+    cv2.line(frame, (1, BELT_AREA_Y_DOWN), (639, BELT_AREA_Y_DOWN), (0, 255, 0), thickness=2)
+    cv2.line(frame, (1, BELT_AREA_Y_UP), (639, BELT_AREA_Y_UP), (255, 0, 0), thickness=2)
 
 
 def detect_circles_current_frame(camera):
+    frame = camera.current_frame
     if Environment().is_live:
-        circles = get_circles_mask(camera.current_frame)
+        circles = get_circles_mask(frame)
         if circles is None:
-            return None
+            return []
 
         circles = np.round(circles[0, :]).astype(int)
         sanitized_circles = []
         # Draw detected circles
         for x, y, r in circles:
-            camera.draw_circle(camera.current_frame, x, y, r, (0, 255, 0), 2)
-            camera.draw_circle(camera.current_frame, x, y, 2, (0, 0, 255), 3)
-            sanitized_circles.append(
-                (
-                    x,
-                    y,
-                    r,
-                    rgb_to_color(
-                        camera.current_frame[x, y, 2],
-                        camera.current_frame[x, y, 1],
-                        camera.current_frame[x, y, 0],
-                    ),
+            if y > BELT_AREA_Y_DOWN or y < BELT_AREA_Y_UP or x > BELT_AREA_X_RIGHT + 100 or x < BELT_AREA_X_LEFT:
+                continue
+
+            if 1 < x < frame.shape[0]:
+                cv2.circle(frame, (x, y), r, (0, 255, 0), 2)
+                cv2.circle(frame, (x, y - 50), 2, (0, 0, 255), 3)
+                print(f"Colour point: x={x}, y={y-50}")
+                colour = rgb_to_color(
+                    frame[x, y - 50, 2],
+                    frame[x, y - 50, 1],
+                    frame[x, y - 50, 0],
                 )
-            )
+                if colour is None:
+                    continue
+
+                # print(f"Circle at {x}, {y} with colour: {colour}")
+                sanitized_circles.append((x,y,r,colour))
+        # draw_lines(frame)
+        
+        
         return sanitized_circles
     else:
         return []
@@ -143,9 +155,9 @@ class FilterServoInstructionsQueue:
     def __init__(self):
         self.instructions = []
 
-    def add_instruction(self, time_added, colour):
+    def add_instruction(self, time_added, disc):
         self.instructions = [
-            Instruction(time_added=time_added, move=COLOUR_FILTER_MAP[colour])
+            Instruction(time_added=time_added, disc=disc)
         ] + self.instructions
 
     def get_instruction(self, delay):

@@ -1,4 +1,4 @@
-from app.service import BeltService
+""" from app.service import BeltService
 from app.constants import (
     LED_CHANNEL,
     INTAKE_SERVO_CHANNEL,
@@ -40,4 +40,4 @@ def create_belt_service() -> BeltService:
     start_button.set_event(service.turn_on)
     stop_button.set_event(service.turn_off)
 
-    return service
+    return service """

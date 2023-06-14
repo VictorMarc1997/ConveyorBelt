@@ -15,9 +15,9 @@ class CameraController(BaseController):
         print(f"Connecting the camera on channel {CAMERA_GPIO}")
         if self.env.is_live:
             camera = cv2.VideoCapture(CAMERA_GPIO)
+            camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+            camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 640)
             super().__init__(camera, CAMERA_GPIO)
-            self.connector.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-            self.connector.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
         else:
             super().__init__(None, CAMERA_GPIO)
         self.frame = None
@@ -27,16 +27,18 @@ class CameraController(BaseController):
         retry_count = 1
         while True:
             if self.env.is_live:
-                ret, self.frame = self.connector.read()
+                ret, new_frame = self.connector.read()
             else:
-                ret, self.frame = True, None
+                ret, new_frame = True, None
             retry_count += 1
             if ret:
                 break
             elif retry_count > RETRIES:
                 print("Failed to read_frame from camera")
-            sleep(0.05)
+            # sleep(0.05)
 
+        # self.frame = cv2.rotate(new_frame, cv2.ROTATE_90_CLOCKWISE)
+        self.frame = new_frame
         return self.frame
 
     @property
@@ -47,6 +49,7 @@ class CameraController(BaseController):
         if self.env.is_live:
             # Display the frame using Matplotlib
             cv2.imshow("Camera feed", self.current_frame)
+            cv2.waitKey(1)
 
     def stop(self):
         print(f"Disconnecting the camera on channel {self.channel}")

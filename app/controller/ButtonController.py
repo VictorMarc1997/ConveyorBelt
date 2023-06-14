@@ -17,11 +17,13 @@ class ButtonController(BaseController):
 
     def setup(self):
         GPIO.setwarnings(False)  # Ignore warning for now
-        GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering / Maybe disable this
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+    def is_pressed(self):
+        return GPIO.input(self.pin) == GPIO.HIGH
 
     def set_event(self, callback_fn):
         if self.env.is_live:
             GPIO.add_event_detect(
                 self.pin, GPIO.RISING, callback=callback_fn
-            )  # Setup event on pin 10 rising edge
+            )

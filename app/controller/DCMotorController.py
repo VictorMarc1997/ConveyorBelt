@@ -4,6 +4,9 @@ from app.utils import Environment
 # COMMENT THESE LIBRARIES TO RUN SIMULATION
 import RPi.GPIO as GPIO
 
+PWM_ON = 33
+PWM_OFF = 0
+
 
 class DCMotorController(BaseController):
     env = Environment()
@@ -22,7 +25,6 @@ class DCMotorController(BaseController):
         self.set_forward()
 
     def setup(self):
-        GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(self.en, GPIO.OUT)
         GPIO.setup(self.in1, GPIO.OUT)
@@ -47,9 +49,9 @@ class DCMotorController(BaseController):
     def start(self):
         print(f"Starting the DC Motor on pin {self.channel}")
         if self.env.is_live:
-            self.motor_pwm.ChangeDutyCycle(100)
+            self.motor_pwm.ChangeDutyCycle(PWM_ON)
 
     def stop(self):
         print(f"Stopping the DC Motor on pin {self.channel}")
         if self.env.is_live:
-            self.motor_pwm.ChangeDutyCycle(0)
+            self.motor_pwm.ChangeDutyCycle(PWM_OFF)
